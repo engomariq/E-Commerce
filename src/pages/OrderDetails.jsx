@@ -1,166 +1,203 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import {
   Box,
-  Typography,
   Card,
   CardContent,
+  Typography,
+  Stack,
   Chip,
   Button,
-  Stack,
-  Divider,
 } from "@mui/material";
-import { Phone, Cancel, DoneAll, Person, Home } from "@mui/icons-material";
+import { Phone, Cancel, DoneAll } from "@mui/icons-material";
 
-const OrderDetails = ({ order }) => {
-  const sampleOrder = order || {
+const ordersData = [
+  {
     id: 1,
-    service: "Plumbing",
-    artisan: "Ali Ahmed",
-    status: "Pending",
+    service: "سباكة",
+    artisan: "علي محمد",
+    status: "قيد الانتظار",
     date: "2025-10-01",
-    description: "Fix water leakage in the kitchen sink.",
+    description: "تصليح تسريب الماء في المطبخ",
     price: "$40",
-    address: "Mosul, Al-Zahraa Street",
-  };
+    address: "الموصل، شارع الزهراء",
+  },
+  {
+    id: 2,
+    service: "نجارة",
+    artisan: "عمر صالح",
+    status: "مقبول",
+    date: "2025-09-28",
+    description: "تركيب باب خشبي للغرفة",
+    price: "$60",
+    address: "الموصل، حي الصناعة",
+  },
+  {
+    id: 3,
+    service: "كهرباء",
+    artisan: "مصطفى خالد",
+    status: "مكتمل",
+    date: "2025-09-25",
+    description: "إصلاح دائرة كهربائية في الصالة",
+    price: "$50",
+    address: "الموصل، حي الزهور",
+  },
+];
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Pending":
-        return "warning";
-      case "Accepted":
-        return "info";
-      case "Completed":
-        return "success";
-      default:
-        return "default";
-    }
-  };
+const getStatusColor = (status) => {
+  switch (status) {
+    case "قيد الانتظار":
+      return "warning";
+    case "مقبول":
+      return "info";
+    case "مكتمل":
+      return "success";
+    default:
+      return "default";
+  }
+};
+
+const OrderDetails = () => {
+  const { id } = useParams();
+  const order = ordersData.find((o) => o.id === parseInt(id));
+
+  if (!order) {
+    return (
+      <Box sx={{ p: 5, textAlign: "center" }}>
+        <Typography variant="h5">الطلب غير موجود</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box
       sx={{
         p: 3,
-        bgcolor: "#f3f4f6",
         minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
+        mt: 10,
+        background: "linear-gradient(120deg, #29373e, #f0f8ff, #d9f0ff, #e6f4ff)",
+        backgroundSize: "400% 400%",
+        animation: "gradientBG 25s ease infinite",
       }}
     >
       <Card
         sx={{
-          borderRadius: 5,
-          boxShadow: "0px 8px 20px rgba(0,0,0,0.1)",
-          maxWidth: 600,
+          position: "relative",
+          borderRadius: 4,
+          maxWidth: 650,
           width: "100%",
-          p: 2,
-          background: "#fff",
-          transition: "transform 0.3s ease",
-          "&:hover": { transform: "translateY(-4px)" },
+          p: 3,
+          background: "linear-gradient(135deg, #6366f1, #3b82f6, #8b5cf6)",
+          color: "#fff",
+          boxShadow: "0px 12px 40px rgba(0,0,0,0.25)",
+          transition: "transform 0.5s ease, box-shadow 0.5s ease, filter 0.5s ease",
+          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
+          "&:hover": { transform: "translateY(-15px) scale(1.03)", boxShadow: "0px 25px 60px rgba(0,0,0,0.4)", filter: "brightness(1.2)" },
         }}
       >
+       
+        <Box
+          sx={{
+            width: "100%",
+            height: 6,
+            borderRadius: "3px",
+            background: "linear-gradient(90deg, #6366f1, #3b82f6, #8b5cf6)",
+            mb: 2,
+          }}
+        />
+
         <CardContent>
           <Typography
             variant="h4"
             fontWeight="bold"
-            sx={{
-              mb: 2,
-              background: "linear-gradient(90deg, #1976d2, #42a5f5)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
+            sx={{ mb: 3, textAlign: "center", color: "#fff" }}
           >
-            Order Details
+            تفاصيل الطلب
           </Typography>
 
-          <Divider sx={{ mb: 2 }} />
-
-          <Typography variant="h6" fontWeight="600">
-            {sampleOrder.service}
+          <Typography variant="h6" sx={{ fontWeight: "600", mb: 1 }}>
+            الخدمة: {order.service}
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            الحرفي: {order.artisan}
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            التاريخ: {order.date}
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            العنوان: {order.address}
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            الوصف: {order.description}
+          </Typography>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", color: "#f3f4f6" }}>
+            السعر: {order.price}
           </Typography>
 
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Person color="primary" />
-            <Typography variant="body1" color="text.secondary">
-              Artisan: {sampleOrder.artisan}
-            </Typography>
-          </Stack>
-
-          <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-            Date: {sampleOrder.date}
-          </Typography>
-
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
-            <Home color="action" />
-            <Typography variant="body1" color="text.secondary">
-              {sampleOrder.address}
-            </Typography>
-          </Stack>
-
-          <Typography variant="body1" sx={{ mt: 2 }}>
-            Description: {sampleOrder.description}
-          </Typography>
-
-          <Typography
-            variant="h6"
-            sx={{
-              mt: 2,
-              color: "success.main",
-              fontWeight: "bold",
-            }}
-          >
-            Price: {sampleOrder.price}
-          </Typography>
-
-          <Stack
-            direction="row"
-            spacing={2}
-            sx={{ mt: 3, flexWrap: "wrap" }}
-            alignItems="center"
-          >
+          <Stack direction="row" spacing={2} sx={{ flexWrap: "wrap" }}>
             <Chip
-              label={sampleOrder.status}
-              color={getStatusColor(sampleOrder.status)}
-              sx={{ fontWeight: "bold", px: 1.5 }}
+              label={order.status}
+              color={getStatusColor(order.status)}
+              sx={{
+                fontWeight: 700,
+                padding: "0 14px",
+                background: "rgba(255,255,255,0.2)",
+                backdropFilter: "blur(4px)",
+                color: "#fff",
+                "&:hover": { transform: "scale(1.08)", background: "rgba(255,255,255,0.35)" },
+              }}
             />
 
             <Button
               variant="contained"
               startIcon={<Phone />}
               sx={{
-                borderRadius: 3,
+                borderRadius: 18,
                 textTransform: "none",
-                background: "linear-gradient(90deg, #1976d2, #42a5f5)",
-                boxShadow: "0px 4px 12px rgba(25,118,210,0.4)",
+                fontWeight: 700,
+                transition: "all 0.3s ease",
+                boxShadow: "0px 6px 20px rgba(0,0,0,0.25)",
+                background: "linear-gradient(90deg, #6366f1, #3b82f6, #8b5cf6)",
+                "&:hover": { transform: "scale(1.1)", boxShadow: "0px 8px 28px rgba(0,0,0,0.4)" },
               }}
             >
-              Contact Artisan
+              التواصل مع الحرفي
             </Button>
 
-            {sampleOrder.status === "Pending" && (
+            {order.status === "قيد الانتظار" && (
               <Button
                 variant="outlined"
                 color="error"
                 startIcon={<Cancel />}
                 sx={{
-                  borderRadius: 3,
+                  borderRadius: 18,
                   textTransform: "none",
+                  fontWeight: 700,
+                  transition: "all 0.3s ease",
                 }}
               >
-                Cancel Order
+                إلغاء الطلب
               </Button>
             )}
-            {sampleOrder.status === "Completed" && (
+
+            {order.status === "مكتمل" && (
               <Button
                 variant="outlined"
                 color="success"
                 startIcon={<DoneAll />}
                 sx={{
-                  borderRadius: 3,
+                  borderRadius: 18,
                   textTransform: "none",
+                  fontWeight: 700,
+                  transition: "all 0.3s ease",
                 }}
               >
-                Mark as Reviewed
+                تم المراجعة
               </Button>
             )}
           </Stack>
