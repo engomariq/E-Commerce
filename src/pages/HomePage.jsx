@@ -1,201 +1,116 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Container,
   Typography,
   Grid,
   Card,
-  CardContent,
   Button,
+  Stack,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import ElectricalServicesIcon from "@mui/icons-material/ElectricalServices";
-import PlumbingIcon from "@mui/icons-material/Plumbing";
-import BuildIcon from "@mui/icons-material/Build";
-import SearchIcon from "@mui/icons-material/Search";
+import { useSearch } from "../context/SearchContext";
 
 function HomePage() {
+  const navigate = useNavigate();
+  const { searchText } = useSearch();
   const services = [
     {
       title: "كهربائي",
-      icon: <ElectricalServicesIcon sx={{ fontSize: 60 }} />,
       description: "خدمات كهربائية احترافية لمنزلك",
-      image:
-        "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+      image: "/services/electrician.jpg",
     },
     {
       title: "سباك",
-      icon: <PlumbingIcon sx={{ fontSize: 60 }} />,
       description: "حلول سباكة متكاملة وصيانة عامة",
-      image: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+      image: "/services/plumber.webp",
     },
     {
       title: "نجار",
-      icon: <BuildIcon sx={{ fontSize: 60 }} />,
       description: "أعمال نجارة وصيانة خشبية احترافية",
-      image:
-        "https://images.unsplash.com/photo-1601058268499-e52658b8bb88?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+      image: "/services/joiner.jpg",
     },
     {
-      title: "دهان",
-      icon: <BuildIcon sx={{ fontSize: 60 }} />,
+      title: "صباغ",
       description: "خدمات دهان وتشطيب عالية الجودة",
-      image:
-        "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+      image: "/services/dyestuff.jpg",
     },
     {
       title: "مكيفات",
-      icon: <BuildIcon sx={{ fontSize: 60 }} />,
       description: "تركيب وصيانة أنظمة التكييف",
-      image:
-        "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+      image: "/services/Air conditioning technician.jpg",
     },
     {
-      title: "بلاط",
-      icon: <BuildIcon sx={{ fontSize: 60 }} />,
+      title: "السيراميك",
       description: "تركيب وصيانة البلاط والسيراميك",
-      image:
-        "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+      image: " /services/tile technician.jpg",
     },
     {
-      title: "جبس",
-      icon: <BuildIcon sx={{ fontSize: 60 }} />,
-      description: "تصميم وتنفيذ أعمال الجبس",
-      image:
-        "https://images.unsplash.com/photo-1513694203232-719a280e022f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+      title: "السقوف والجدران",
+      description: "تصميم وتنفيذ أعمال ونقش السقوف والجدران",
+      image: "/services/Gypsum.webp",
     },
     {
       title: "ألمنيوم",
-      icon: <BuildIcon sx={{ fontSize: 60 }} />,
       description: "تركيب وصيانة الألمنيوم والزجاج",
-      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+      image: "/services/Aluminum Installer.jpg",
     },
     {
       title: "حداد",
-      icon: <BuildIcon sx={{ fontSize: 60 }} />,
       description: "أعمال الحدادة والمعادن",
-      image:
-        "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+      image: "/services/Blacksmith.jpg",
     },
     {
       title: "تنظيف",
-      icon: <BuildIcon sx={{ fontSize: 60 }} />,
       description: "خدمات تنظيف شاملة للمنازل",
-      image:
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+      image: "/services/Housekeeper.jpg",
     },
     {
       title: "حدائق",
-      icon: <BuildIcon sx={{ fontSize: 60 }} />,
       description: "تنسيق وصيانة الحدائق",
-      image:
-        "https://images.unsplash.com/photo-1558904541-efa843a96f01?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+      image: "/services/Gardener.png",
     },
     {
       title: "عزل",
-      icon: <BuildIcon sx={{ fontSize: 60 }} />,
       description: "خدمات العزل المائي والحراري",
-      image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+      image: " /services/Waterproofing Technician.jpeg",
     },
   ];
 
   return (
-    <Box>
+    <>
       <Navbar />
 
-      <Box
-        sx={{
-          bgcolor: "primary.main",
-          color: "white",
-          pt: 15,
-          pb: 8,
-        }}
-      >
-        <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{ my: 12 }}>
+        {!searchText && (
           <Typography
-            variant="h2"
+            variant="h3"
             align="center"
             gutterBottom
             sx={{
-              fontWeight: 800,
-              backgroundImage:
-                "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
-              backgroundClip: "text",
-              color: "transparent",
-              mb: 4,
-              textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
-              animation: "fadeIn 1s ease-in",
-              "@keyframes fadeIn": {
-                "0%": {
-                  opacity: 0,
-                  transform: "translateY(-20px)",
-                },
-                "100%": {
-                  opacity: 1,
-                  transform: "translateY(0)",
-                },
+              fontWeight: 700,
+              color: "primary.main",
+              position: "relative",
+              "&::after": {
+                content: '""',
+                display: "block",
+                width: "300px",
+                height: "2px",
+                backgroundColor: "primary.main",
+                margin: "10px auto",
+                borderRadius: "3px",
               },
             }}
           >
-            ابحث عن حرفيين محترفين
+            أطلع على الخدمات
           </Typography>
-          <Typography
-            variant="h5"
-            align="center"
-            paragraph
-            sx={{
-              color: "white",
-              mb: 6,
-              opacity: 0.9,
-              maxWidth: "800px",
-              mx: "auto",
-              lineHeight: 1.8,
-              animation: "slideUp 1s ease-in",
-              "@keyframes slideUp": {
-                "0%": {
-                  opacity: 0,
-                  transform: "translateY(20px)",
-                },
-                "100%": {
-                  opacity: 1,
-                  transform: "translateY(0)",
-                },
-              },
-            }}
-          >
-            نوفر لك أفضل الحرفيين في منطقتك بضغطة زر
-          </Typography>
-          <Box display="flex" justifyContent="center" mt={4}></Box>
-        </Container>
-      </Box>
+        )}
 
-      <Container maxWidth="lg" sx={{ my: 12 }}>
-        <Typography
-          variant="h3"
-          align="center"
-          gutterBottom
-          sx={{
-            fontWeight: 700,
-            color: "primary.main",
-            position: "relative",
-            "&::after": {
-              content: '""',
-              display: "block",
-              width: "60px",
-              height: "4px",
-              backgroundColor: "primary.main",
-              margin: "16px auto",
-              borderRadius: "2px",
-            },
-            animation: "fadeIn 1s ease-in",
-          }}
-        >
-          خدماتنا
-        </Typography>
         <Grid
           container
           spacing={4}
-          mt={2}
+          mt={1}
           sx={{
             display: "grid",
             gridTemplateColumns: {
@@ -203,137 +118,112 @@ function HomePage() {
               sm: "repeat(2, 1fr)",
               md: "repeat(3, 1fr)",
             },
-            gap: 4,
-            "& .MuiGrid-item": {
-              display: "flex",
-              width: "100%",
-              maxWidth: "100%",
-              flexBasis: "100%",
-            },
+            gap: 1,
           }}
         >
-          {services.map((service, index) => (
-            <Grid
-              item
-              key={index}
-              sx={{
-                height: "100%",
-                width: "100%",
-              }}
-            >
-              <Card
-                sx={{
-                  height: "100%",
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    transform: "translateY(-8px)",
-                    boxShadow: "0 20px 30px rgba(0,0,0,0.1)",
-                    "& .service-image": {
-                      transform: "scale(1.1)",
-                    },
-                  },
-                  minHeight: "500px",
-                  maxHeight: "500px",
-                }}
-              >
-                <Box
-                  className="service-image"
+          {services
+            .filter(
+              (service) =>
+                searchText === "" ||
+                service.title.includes(searchText) ||
+                service.description.includes(searchText)
+            )
+            .map((service, index) => (
+              <Grid item key={index}>
+                <Card
                   sx={{
-                    height: "250px",
+                    height: "100%",
                     width: "100%",
-                    position: "relative",
-                    overflow: "hidden",
-                    transition: "transform 0.5s ease",
-                    flexShrink: 0,
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={service.image}
-                    alt={service.title}
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <Box
-                    className="icon"
-                    sx={{
-                      position: "absolute",
-                      bottom: -25,
-                      right: 20,
-                      backgroundColor: "primary.main",
-                      borderRadius: "50%",
-                      width: 50,
-                      height: 50,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "white",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                    }}
-                  >
-                    {service.icon}
-                  </Box>
-                </Box>
-                <Box
-                  sx={{
-                    p: 3,
-                    flexGrow: 1,
                     display: "flex",
                     flexDirection: "column",
+                    borderRadius: "16px",
+                    overflow: "hidden",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      transform: "translateY(-8px)",
+                      boxShadow: "0 20px 30px rgba(0,0,0,0.1)",
+                      "& .service-image": { transform: "scale(1.1)" },
+                    },
+                    minHeight: "500px",
                   }}
                 >
-                  <Typography
-                    variant="h6"
-                    component="h2"
-                    gutterBottom
+                  <Box
+                    className="service-image"
                     sx={{
-                      fontWeight: 700,
-                      color: "primary.dark",
-                      mb: 1,
+                      height: "250px",
+                      overflow: "hidden",
+                      transition: "transform 0.5s ease",
                     }}
                   >
-                    {service.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
+                    <Box
+                      component="img"
+                      src={service.image}
+                      alt={service.title}
+                      sx={{
+                        width: service.title === "ألمنيوم" ? "80%" : "100%",
+                        height: service.title === "ألمنيوم" ? "180%" : "100%",
+                        objectFit: "cover",
+                        margin: service.title === "ألمنيوم" ? "10%" : "0",
+                        display:
+                          service.title === "ألمنيوم" ? "block" : "initial",
+                        transform:
+                          service.title === "ألمنيوم"
+                            ? "translateY(-9%)"
+                            : "none",
+                      }}
+                    />
+                  </Box>
+
+                  <Box
                     sx={{
-                      mb: 2,
+                      p: 3,
                       flexGrow: 1,
+                      display: "flex",
+                      flexDirection: "column",
                     }}
                   >
-                    {service.description}
-                  </Typography>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    size="medium"
-                    sx={{
-                      borderRadius: "8px",
-                      textTransform: "none",
-                      "&:hover": {
-                        backgroundColor: "primary.main",
-                        color: "white",
-                      },
-                    }}
-                  >
-                    عرض الحرفيين
-                  </Button>
-                </Box>
-              </Card>
-            </Grid>
-          ))}
+                    <Typography
+                      variant="h4"
+                      component="h2"
+                      gutterBottom
+                      align="center"
+                      sx={{ fontWeight: 900, color: "primary.dark" }}
+                    >
+                      {service.title}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      fontWeight={900}
+                      lineHeight={1.75}
+                      color="text.secondary"
+                      align="center"
+                      sx={{ mb: 2, flexGrow: 1 }}
+                    >
+                      {service.description}
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => navigate("/workers")}
+                      sx={{
+                        borderRadius: "8px",
+                        textTransform: "none",
+                        width: "100%",
+                        "&:hover": {
+                          backgroundColor: "primary.main",
+                          color: "white",
+                        },
+                      }}
+                    >
+                      عرض الحرفيين
+                    </Button>
+                  </Box>
+                </Card>
+              </Grid>
+            ))}
         </Grid>
       </Container>
-    </Box>
+    </>
   );
 }
 
