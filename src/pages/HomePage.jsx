@@ -79,7 +79,16 @@ function HomePage() {
   ];
 
   return (
-    <>
+    <Box
+      sx={{
+        backgroundColor: "white",
+        minHeight: "100%",
+        position: "absolute",
+        width: "100%",
+        top: 0,
+        left: 0,
+      }}
+    >
       <Navbar />
 
       <Container maxWidth="lg" sx={{ my: 12 }}>
@@ -107,18 +116,21 @@ function HomePage() {
           </Typography>
         )}
 
-        <Grid
-          container
-          spacing={4}
-          mt={1}
+        <Box
           sx={{
             display: "grid",
             gridTemplateColumns: {
               xs: "1fr",
-              sm: "repeat(2, 1fr)",
-              md: "repeat(3, 1fr)",
+              sm: "repeat(2, 350px)",
+              md: "repeat(3, 350px)",
             },
-            gap: 1,
+            columnGap: "100px",
+            rowGap: "40px",
+            width: "100%",
+            justifyContent: "center",
+            margin: "0 auto",
+            maxWidth: "1400px",
+            padding: "0 40px",
           }}
         >
           {services
@@ -221,9 +233,9 @@ function HomePage() {
                 </Card>
               </Grid>
             ))}
-        </Grid>
+        </Box>
       </Container>
-    </>
+    </Box>
   );
 }
 

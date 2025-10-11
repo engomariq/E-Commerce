@@ -9,12 +9,13 @@ import {
   TextField,
   InputAdornment,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import { useSearch } from "../context/SearchContext";
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const { searchText, setSearchText } = useSearch();
 
@@ -23,74 +24,60 @@ function Navbar() {
     setSearchText(newValue);
   };
 
+  const isOrdersPage =
+    location.pathname.startsWith("/orders") ||
+    location.pathname.startsWith("/order");
+
+  const buttonStyle = {
+    textTransform: "none",
+    fontSize: "1.25rem",
+    fontWeight: "bold",
+    color: "inherit",
+    backgroundColor: "transparent",
+    transition: "all 0.3s ease",
+    padding: "6px 16px",
+    minWidth: "120px",
+    "&:hover": {
+      color: "#fff",
+      boxShadow: "0 0 15px #00e5ff",
+      backgroundColor: "rgba(0, 229, 255, 0.25)",
+    },
+  };
+
+  const activeButtonStyle = {
+    ...buttonStyle,
+    color: "#00e5ff",
+    backgroundColor: "rgba(0, 229, 255, 0.15)",
+    boxShadow: "0 0 15px #00e5ff",
+  };
+
   return (
     <AppBar
-      position="static"
+      position="fixed"
       sx={{
-        borderRadius: "22px 22px 22px 22px",
-        boxShadow: "0px 0px 11px rgba(0, 0, 0, 1)",
+        background: "linear-gradient(90deg, #0f2027, #203a43, #2c5364)",
+        boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+        zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-          <Box>
-            {!isAuthenticated ? (
-              <>
-                <Button
-                  color="inherit"
-                  onClick={() => navigate("/login")}
-                  sx={{
-                    fontSize: "1.5rem",
-                    mr: 2,
-                    fontWeight: 700,
-                  }}
-                >
-                  تسجيل دخول
-                </Button>
-                <Button
-                  color="inherit"
-                  onClick={() => navigate("/register")}
-                  sx={{
-                    fontSize: "1.5rem",
-                    fontWeight: 700,
-                  }}
-                >
-                  حساب جديد
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  color="inherit"
-                  onClick={() => navigate("/register?type=worker")}
-                  sx={{
-                    fontSize: "1.5rem",
-                    fontWeight: 900,
-                  }}
-                >
-                  حساب جديد
-                </Button>
-              </>
+        <Toolbar>
+          <Box sx={{ flexGrow: 0, display: "flex", gap: 2 }}>
+            {!isAuthenticated && (
+              <Button
+                color="inherit"
+                onClick={() => navigate("/login")}
+                sx={buttonStyle}
+              >
+                تسجيل دخول
+              </Button>
             )}
           </Box>
 
+       
           <Box
-            display="flex"
-            alignItems="center"
-            gap={55}
-            flexDirection="row-reverse"
+            sx={{ flexGrow: 1, display: "flex", justifyContent: "flex-start" }}
           >
-            <Box display="flex" alignItems="center" gap={1}>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{ cursor: "pointer" }}
-                onClick={() => navigate("/")}
-              >
-                حِرَف
-              </Typography>
-            </Box>
-
             <TextField
               placeholder="ابحث عن حرفي..."
               size="small"
@@ -100,14 +87,9 @@ function Navbar() {
               sx={{
                 bgcolor: "white",
                 borderRadius: 1,
-                marginLeft: "auto",
                 "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "white",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
+                  "& fieldset": { borderColor: "white" },
+                  "&:hover fieldset": { borderColor: "#00e5ff" },
                   "& input": {
                     textAlign: "right",
                     direction: "rtl",
@@ -115,6 +97,10 @@ function Navbar() {
                   },
                 },
                 width: "300px",
+                transition: "all 0.3s ease",
+                "&:focus-within": {
+                  boxShadow: "0 0 10px #00e5ff",
+                },
               }}
               InputProps={{
                 endAdornment: (
@@ -124,6 +110,35 @@ function Navbar() {
                 ),
               }}
             />
+          </Box>
+
+        
+          <Box sx={{ flexGrow: 0, display: "flex", gap: 2 }}>
+            {isAuthenticated ? (
+              <Button
+                onClick={() => navigate("/register?type=worker")}
+                sx={buttonStyle}
+              >
+                حساب جديد
+              </Button>
+            ) : (
+              <Button onClick={() => navigate("/register")} sx={buttonStyle}>
+                حساب جديد
+              </Button>
+            )}
+
+            {isAuthenticated && (
+              <Button
+                onClick={() => navigate("/orders")}
+                sx={isOrdersPage ? activeButtonStyle : buttonStyle}
+              >
+                الطلبات
+              </Button>
+            )}
+
+            <Button onClick={() => navigate("/")} sx={buttonStyle}>
+              حرف
+            </Button>
           </Box>
         </Toolbar>
       </Container>
