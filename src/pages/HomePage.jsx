@@ -213,22 +213,24 @@ function HomePage() {
                     >
                       {service.description}
                     </Typography>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={() => navigate("/workers")}
-                      sx={{
-                        borderRadius: "8px",
-                        textTransform: "none",
-                        width: "100%",
-                        "&:hover": {
-                          backgroundColor: "primary.main",
-                          color: "white",
-                        },
-                      }}
-                    >
-                      عرض الحرفيين
-                    </Button>
+      
+<Button
+  variant="outlined"
+  color="primary"
+  onClick={() => navigate(`/workers?profession=${service.title}`)}
+  sx={{
+    borderRadius: "8px",
+    textTransform: "none",
+    width: "100%",
+    "&:hover": {
+      backgroundColor: "primary.main",
+      color: "white",
+    },
+  }}
+>
+  عرض الحرفيين
+</Button>
+
                   </Box>
                 </Card>
               </Grid>

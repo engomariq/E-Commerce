@@ -13,8 +13,10 @@
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "@mui/icons-material": "^7.3.4",
+    "@mui/material": "^7.3.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.3",
     "stylis": "^4.3.6",
     "stylis-plugin-rtl": "^2.1.1"
