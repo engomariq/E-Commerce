@@ -9,16 +9,17 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useNavigate } from "react-router-dom";
-// import { useTranslation } from "react-i18next"; //
-// import { i18n } from "./i18n"; // للترجمة وتغيير اللغة
-// import { useSnackbar } from "notistack"; // لعرض إشعارات ورسائل قصيرة للمستخدم
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
   const [language, setLanguage] = useState("ar");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
+  
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -34,14 +35,24 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
+    
     if (!email || !password) {
-      alert("الرجاء إدخال البريد الإلكتروني وكلمة السر");
+      setError("الرجاء إدخال البريد الإلكتروني وكلمة المرور");
       return;
     }
-   
-    localStorage.setItem("isAuthenticated", "true");
-    navigate("/pages");
-    navigate("/pages");
+
+    const result = login(email, password);
+    
+    if (result.success) {
+      if (result.user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/profile");
+      }
+    } else {
+      setError(result.message);
+    }
   };
 
   return (
@@ -68,20 +79,28 @@ function Login() {
           تسجيل الدخول
         </Typography>
 
+        {error && (
+          <Typography color="error" textAlign="center" variant="body2">
+            {error}
+          </Typography>
+        )}
+
         <TextField
           label="البريد الإلكتروني"
-          type="email"
+          type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           fullWidth
+          dir="rtl"
         />
 
         <TextField
-          label="كلمة السر"
+          label="كلمة المرور"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           fullWidth
+          dir="rtl"
         />
 
         <Button

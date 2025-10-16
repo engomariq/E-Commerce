@@ -21,7 +21,6 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { Search, LocationOn, Work } from "@mui/icons-material";
 
-// بيانات الحرفيين الافتراضية
 const workersData = [
   {
     id: 1,
@@ -138,7 +137,6 @@ function WorkersList() {
     minRating: 0,
   });
 
-  // استخراج المهنة من الـ query parameters
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const professionFromUrl = params.get("profession");
@@ -147,7 +145,6 @@ function WorkersList() {
     }
   }, [location]);
 
-  // تطبيق الفلترة
   useEffect(() => {
     let filtered = workersData;
 
@@ -224,12 +221,12 @@ function WorkersList() {
       }}
     >
       <Container maxWidth="lg">
-        {/* العنوان والبحث */}
         <Box sx={{ mb: 4, textAlign: "center" }}>
           <Typography
             variant="h3"
             component="h1"
             gutterBottom
+            sx={{ mb: 2 }}
             sx={{
               fontWeight: 700,
               color: "primary.main",
@@ -246,7 +243,6 @@ function WorkersList() {
           </Typography>
         </Box>
 
-        {/* فلترات البحث */}
         <Card sx={{ p: 3, mb: 4, borderRadius: 3 }}>
           <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="center">
             <TextField
@@ -312,12 +308,10 @@ function WorkersList() {
           </Stack>
         </Card>
 
-        {/* نتائج البحث */}
         <Typography variant="h6" sx={{ mb: 2, color: "text.secondary" }}>
           {workers.length} حرفي متاح
         </Typography>
 
-        {/* قائمة الحرفيين */}
         <Grid container spacing={3}>
           {workers.map((worker) => (
             <Grid item xs={12} sm={6} md={4} key={worker.id}>
@@ -335,7 +329,6 @@ function WorkersList() {
                   },
                 }}
               >
-                {/* صورة الحرفي */}
                 <Box sx={{ position: "relative" }}>
                   <CardMedia
                     component="img"
@@ -371,7 +364,6 @@ function WorkersList() {
                 </Box>
 
                 <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                  {/* اسم الحرفي وتقييمه */}
                   <Box sx={{ mb: 2 }}>
                     <Typography variant="h6" component="h2" gutterBottom>
                       {worker.name}
@@ -387,7 +379,6 @@ function WorkersList() {
                     </Box>
                   </Box>
 
-                  {/* المعلومات */}
                   <Stack spacing={1} sx={{ mb: 3 }}>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                       <LocationOn sx={{ fontSize: 18, color: "text.secondary", ml: 1 }} />
@@ -406,7 +397,6 @@ function WorkersList() {
                     </Typography>
                   </Stack>
 
-                  {/* الوصف */}
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -415,7 +405,6 @@ function WorkersList() {
                     {worker.description}
                   </Typography>
 
-                  {/* السعر والزر */}
                   <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Typography variant="h6" color="primary.main" fontWeight="bold">
                       {worker.price} $
@@ -440,7 +429,6 @@ function WorkersList() {
           ))}
         </Grid>
 
-        {/* حالة عدم وجود نتائج */}
         {workers.length === 0 && (
           <Box sx={{ textAlign: "center", py: 8 }}>
             <Typography variant="h5" color="text.secondary" gutterBottom>
