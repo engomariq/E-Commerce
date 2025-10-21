@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Container,
@@ -16,8 +16,16 @@ const Profile = () => {
   const navigate = useNavigate();
   const { logout, user } = useAuth();
 
+  console.log("Token:", localStorage.getItem("token"));
+  console.log("User:", localStorage.getItem("user"));
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
   if (!user) {
-    navigate("/login");
     return null;
   }
 

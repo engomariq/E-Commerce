@@ -1,90 +1,124 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 const AuthContext = createContext(null);
 
-let registeredUsers = [];
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    localStorage.getItem("isAuthenticated") === "true"
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     const savedUser = localStorage.getItem("user");
-    if (savedUser) {
+    
+    if (token && savedUser) {
+      setIsAuthenticated(true);
       setUser(JSON.parse(savedUser));
     }
   }, []);
 
-  const login = (email, password) => {
-    if (email === "admin" && password === "123") {
-      const adminUser = {
-        username: "admin",
-        role: "admin",
-        name: "المسؤول",
-        email: "admin@example.com"
-      };
-      setUser(adminUser);
-      setIsAuthenticated(true);
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("user", JSON.stringify(adminUser));
-      return { success: true, user: adminUser };
-    }
-    
-    const foundUser = registeredUsers.find(u => u.email === email && u.password === password);
-    
-    if (foundUser) {
-      const userWithoutPassword = { ...foundUser };
-      delete userWithoutPassword.password;
+  const login = async (identifier, password) => {
+    try {
+      const isEmail = identifier.includes("@");
       
-      setUser(userWithoutPassword);
+      const loginData = isEmail 
+        ? { email: identifier, password }
+        : { phone: identifier, password };
+
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, loginData);
+
+      const { access_token, user: userData } = response.data;
+
+      localStorage.setItem("token", access_token);
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      setUser(userData);
       setIsAuthenticated(true);
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("user", JSON.stringify(userWithoutPassword));
-      return { success: true, user: userWithoutPassword };
+
+      return { success: true, user: userData };
+    } catch (error) {
+      console.error("Login error:", error);
+      return { 
+        success: false, 
+        message: error.response?.data?.message || "فشل تسجيل الدخول" 
+      };
     }
-    
-    return { success: false, message: "البريد الإلكتروني أو كلمة المرور غير صحيحة" };
   };
 
-  const register = (userData) => {
-    const newUser = {
-      ...userData,
-      id: Date.now(),
-      role: userData.userType === "worker" ? "worker" : "customer",
-      joinDate: new Date().toISOString().split("T")[0],
-      status: "active"
-    };
-    
-    registeredUsers.push(newUser);
-    
-    const userWithoutPassword = { ...newUser };
-    delete userWithoutPassword.password;
-    
-    setUser(userWithoutPassword);
-    setIsAuthenticated(true);
-    localStorage.setItem("isAuthenticated", "true");
-    localStorage.setItem("user", JSON.stringify(userWithoutPassword));
+  const register = async (userData) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/auth/register`, {
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        phone: userData.phone,
+        role: userData.userType === "worker" ? "worker" : "client",
+        neighborhood_id: userData.neighborhood_id
+      });
+
+      const { access_token, user: newUser } = response.data;
+
+      localStorage.setItem("token", access_token);
+      localStorage.setItem("user", JSON.stringify(newUser));
+      
+      setUser(newUser);
+      setIsAuthenticated(true);
+
+      return { success: true, user: newUser };
+    } catch (error) {
+      console.error("Register error:", error);
+      return { 
+        success: false, 
+        message: error.response?.data?.message || "فشل التسجيل" 
+      };
+    }
   };
-  
-  const getAllUsers = () => {
-    return registeredUsers.map(u => {
-      const { password, ...userWithoutPassword } = u;
-      return userWithoutPassword;
-    });
+
+  const getProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const response = await axios.get(`${API_BASE_URL}/auth/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const userData = response.data;
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+
+      return { success: true, user: userData };
+    } catch (error) {
+      console.error("Get profile error:", error);
+      
+      if (error.response?.status === 401) {
+        logout();
+      }
+      
+      return { 
+        success: false, 
+        message: error.response?.data?.message || "فشل جلب البيانات" 
+      };
+    }
   };
 
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("token");
     localStorage.removeItem("user");
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, login, logout, register, getAllUsers }}
+      value={{ isAuthenticated, user, login, logout, register, getProfile }}
     >
       {children}
     </AuthContext.Provider>
