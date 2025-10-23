@@ -14,10 +14,13 @@ import {
   InputLabel,
   FormHelperText,
   Chip,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import HandymanIcon from "@mui/icons-material/Handyman";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const professions = [
   "كهربائي",
@@ -99,12 +102,19 @@ const RegisterForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [userType, setUserType] = useState("client");
+  const [showServiceMessage, setShowServiceMessage] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const type = params.get("type");
+    const redirect = params.get("redirect");
+    
     if (type === "worker") {
       setUserType("worker");
+    }
+    
+    if (redirect === "service") {
+      setShowServiceMessage(true);
     }
   }, [location]);
 
@@ -128,6 +138,8 @@ const RegisterForm = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   const handleUserTypeChange = (event, newType) => {
     if (newType !== null) {
@@ -166,19 +178,33 @@ const RegisterForm = () => {
     return newErrors;
   };
 
+  const { register } = useAuth();
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setApiError("");
     const formData = userType === "client" ? clientForm : workerForm;
     const validationErrors = validateForm(formData);
 
     if (Object.keys(validationErrors).length === 0) {
+      setIsLoading(true);
       try {
-        console.log("Form submitted:", formData);
-        localStorage.setItem("isAuthenticated", "true");
-        navigate("/");
+        const userData = {
+          ...formData,
+          role: userType,
+        };
+        
+        const result = await register(userData);
+        
+        if (result.success) {
+          navigate("/profile");
+        } else {
+          setApiError(result.error || "حدث خطأ أثناء إنشاء الحساب");
+        }
       } catch (error) {
         console.error("Error submitting form:", error);
-        setErrors({ submit: "حدث خطأ أثناء إرسال النموذج" });
+        setApiError("حدث خطأ أثناء إرسال النموذج. الرجاء المحاولة مرة أخرى.");
+      } finally {
+        setIsLoading(false);
       }
     } else {
       setErrors(validationErrors);
@@ -300,6 +326,29 @@ const RegisterForm = () => {
           boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
         }}
       >
+        {showServiceMessage && (
+          <Box
+            sx={{
+              mb: 3,
+              p: 2,
+              backgroundColor: "#fff3cd",
+              borderRadius: "8px",
+              border: "1px solid #ffc107",
+              textAlign: "center",
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#856404",
+                fontWeight: 600,
+              }}
+            >
+              يجب إنشاء حساب أولاً
+            </Typography>
+          </Box>
+        )}
+        
         <Typography
           variant="h4"
           align="center"
@@ -391,6 +440,12 @@ const RegisterForm = () => {
         </Box>
 
         <form onSubmit={handleSubmit}>
+          {apiError && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {apiError}
+            </Alert>
+          )}
+
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             <TextField
               fullWidth
@@ -546,6 +601,7 @@ const RegisterForm = () => {
               color="primary"
               size="large"
               fullWidth
+              disabled={isLoading}
               sx={{
                 mt: 2,
                 py: 1.5,
@@ -562,7 +618,7 @@ const RegisterForm = () => {
                 },
               }}
             >
-              إنشاء حساب
+              {isLoading ? <CircularProgress size={24} /> : "إنشاء حساب"}
             </Button>
           </Box>
         </form>
