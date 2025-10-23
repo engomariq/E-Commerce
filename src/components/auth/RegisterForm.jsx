@@ -18,7 +18,6 @@ import {
 import PersonIcon from "@mui/icons-material/Person";
 import HandymanIcon from "@mui/icons-material/Handyman";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 
 const professions = [
   "كهربائي",
@@ -100,19 +99,12 @@ const RegisterForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [userType, setUserType] = useState("client");
-  const [showServiceMessage, setShowServiceMessage] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const type = params.get("type");
-    const redirect = params.get("redirect");
-    
     if (type === "worker") {
       setUserType("worker");
-    }
-    
-    if (redirect === "service") {
-      setShowServiceMessage(true);
     }
   }, [location]);
 
@@ -174,7 +166,6 @@ const RegisterForm = () => {
     return newErrors;
   };
 
-  const { register } = useAuth();
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = userType === "client" ? clientForm : workerForm;
@@ -182,12 +173,9 @@ const RegisterForm = () => {
 
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const userData = {
-          ...formData,
-          role: userType,
-        };
-        register(userData);
-        navigate("/profile");
+        console.log("Form submitted:", formData);
+        localStorage.setItem("isAuthenticated", "true");
+        navigate("/");
       } catch (error) {
         console.error("Error submitting form:", error);
         setErrors({ submit: "حدث خطأ أثناء إرسال النموذج" });
@@ -312,29 +300,6 @@ const RegisterForm = () => {
           boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
         }}
       >
-        {showServiceMessage && (
-          <Box
-            sx={{
-              mb: 3,
-              p: 2,
-              backgroundColor: "#fff3cd",
-              borderRadius: "8px",
-              border: "1px solid #ffc107",
-              textAlign: "center",
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{
-                color: "#856404",
-                fontWeight: 600,
-              }}
-            >
-              يجب إنشاء حساب أولاً
-            </Typography>
-          </Box>
-        )}
-        
         <Typography
           variant="h4"
           align="center"

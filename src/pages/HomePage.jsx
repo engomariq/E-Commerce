@@ -9,12 +9,12 @@ import {
   Stack,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import { useSearch } from "../context/SearchContext";
 
 function HomePage() {
   const navigate = useNavigate();
   const { searchText } = useSearch();
-
   const services = [
     {
       title: "كهربائي",
@@ -89,6 +89,8 @@ function HomePage() {
         left: 0,
       }}
     >
+      <Navbar />
+
       <Container maxWidth="lg" sx={{ my: 12 }}>
         {!searchText && (
           <Typography
@@ -211,25 +213,24 @@ function HomePage() {
                     >
                       {service.description}
                     </Typography>
+      
+<Button
+  variant="outlined"
+  color="primary"
+  onClick={() => navigate(`/workers?profession=${service.title}`)}
+  sx={{
+    borderRadius: "8px",
+    textTransform: "none",
+    width: "100%",
+    "&:hover": {
+      backgroundColor: "primary.main",
+      color: "white",
+    },
+  }}
+>
+  عرض الحرفيين
+</Button>
 
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={() =>
-                        navigate(`/workers?profession=${service.title}`)
-                      }
-                      sx={{
-                        borderRadius: "8px",
-                        textTransform: "none",
-                        width: "100%",
-                        "&:hover": {
-                          backgroundColor: "primary.main",
-                          color: "white",
-                        },
-                      }}
-                    >
-                      عرض الحرفيين
-                    </Button>
                   </Box>
                 </Card>
               </Grid>

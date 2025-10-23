@@ -21,7 +21,6 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import {
   LocationOn,
   Work,
@@ -33,6 +32,7 @@ import {
   ThumbUp,
 } from "@mui/icons-material";
 
+// بيانات الحرفي الافتراضية
 const workerProfileData = {
   1: {
     id: 1,
@@ -109,254 +109,6 @@ const workerProfileData = {
         date: "2024-01-12"
       }
     ]
-  },
-  3: {
-    id: 3,
-    name: "حسن علي",
-    profession: "سباك",
-    city: "الزهور",
-    rating: 4.7,
-    reviews: 95,
-    experience: 10,
-    priceRange: "40-90 $",
-    image: "/workers/plumber1.jpg",
-    description: "خبير في أعمال السباكة المنزلية والتجارية. متخصص في إصلاح التسريبات وتركيب الأنظمة الصحية.",
-    completedJobs: 210,
-    available: true,
-    phone: "+9647701234569",
-    email: "hassan.ali@example.com",
-    specialties: [
-      "إصلاح التسريبات",
-      "تركيب الأنظمة الصحية",
-      "صيانة المضخات",
-      "تمديد الأنابيب"
-    ],
-    reviewsList: [
-      {
-        id: 1,
-        customer: "خالد أحمد",
-        rating: 5,
-        comment: "عمل ممتاز وسريع",
-        date: "2024-01-14"
-      }
-    ]
-  },
-  4: {
-    id: 4,
-    name: "يوسف محمود",
-    profession: "نجار",
-    city: "الرفاعي",
-    rating: 4.6,
-    reviews: 78,
-    experience: 7,
-    priceRange: "45-95 $",
-    image: "/workers/carpenter1.jpg",
-    description: "نجار ماهر متخصص في صناعة الأثاث المنزلي والمكتبي. أقدم تصاميم عصرية وجودة عالية.",
-    completedJobs: 156,
-    available: true,
-    phone: "+9647701234570",
-    email: "yousef.mahmoud@example.com",
-    specialties: [
-      "صناعة الأثاث",
-      "تركيب الأبواب والنوافذ",
-      "الديكورات الخشبية",
-      "إصلاح الأثاث"
-    ],
-    reviewsList: [
-      {
-        id: 1,
-        customer: "نور الدين",
-        rating: 4.5,
-        comment: "حرفي ماهر وأسعار معقولة",
-        date: "2024-01-13"
-      }
-    ]
-  },
-  5: {
-    id: 5,
-    name: "عمر سعيد",
-    profession: "صباغ",
-    city: "الزهور",
-    rating: 4.8,
-    reviews: 102,
-    experience: 9,
-    priceRange: "35-80 $",
-    image: "/workers/painter1.jpg",
-    description: "صباغ محترف متخصص في الدهانات الداخلية والخارجية. أستخدم أفضل أنواع الدهانات.",
-    completedJobs: 198,
-    available: true,
-    phone: "+9647701234571",
-    email: "omar.saeed@example.com",
-    specialties: [
-      "الدهانات الداخلية",
-      "الدهانات الخارجية",
-      "الديكورات الجدارية",
-      "دهانات الأبواب والنوافذ"
-    ],
-    reviewsList: [
-      {
-        id: 1,
-        customer: "ليلى حسن",
-        rating: 5,
-        comment: "عمل نظيف ومتقن",
-        date: "2024-01-11"
-      }
-    ]
-  },
-  6: {
-    id: 6,
-    name: "كريم عبدالله",
-    profession: "كهربائي",
-    city: "الرفاعي",
-    rating: 4.5,
-    reviews: 67,
-    experience: 6,
-    priceRange: "45-85 $",
-    image: "/workers/electrician3.jpg",
-    description: "كهربائي متخصص في التركيبات المنزلية والصيانة الدورية.",
-    completedJobs: 142,
-    available: true,
-    phone: "+9647701234572",
-    email: "karim.abdullah@example.com",
-    specialties: [
-      "التركيبات المنزلية",
-      "الصيانة الدورية",
-      "إصلاح الأعطال",
-      "تركيب الإنارة"
-    ],
-    reviewsList: [
-      {
-        id: 1,
-        customer: "رامي خالد",
-        rating: 4.5,
-        comment: "خدمة جيدة",
-        date: "2024-01-09"
-      }
-    ]
-  },
-  7: {
-    id: 7,
-    name: "طارق فيصل",
-    profession: "سباك",
-    city: "الزهور",
-    rating: 4.9,
-    reviews: 115,
-    experience: 11,
-    priceRange: "50-100 $",
-    image: "/workers/plumber2.jpg",
-    description: "سباك خبير في جميع أعمال السباكة والصرف الصحي.",
-    completedJobs: 225,
-    available: true,
-    phone: "+9647701234573",
-    email: "tariq.faisal@example.com",
-    specialties: [
-      "السباكة المنزلية",
-      "الصرف الصحي",
-      "تركيب الفلاتر",
-      "صيانة السخانات"
-    ],
-    reviewsList: [
-      {
-        id: 1,
-        customer: "منى أحمد",
-        rating: 5,
-        comment: "ممتاز جداً",
-        date: "2024-01-08"
-      }
-    ]
-  },
-  8: {
-    id: 8,
-    name: "وليد حسين",
-    profession: "نجار",
-    city: "الرفاعي",
-    rating: 4.7,
-    reviews: 88,
-    experience: 8,
-    priceRange: "40-90 $",
-    image: "/workers/carpenter2.jpg",
-    description: "نجار محترف في صناعة وتصليح الأثاث المنزلي.",
-    completedJobs: 175,
-    available: true,
-    phone: "+9647701234574",
-    email: "walid.hussein@example.com",
-    specialties: [
-      "صناعة الأثاث المنزلي",
-      "تصليح الأثاث",
-      "تركيب المطابخ",
-      "الأعمال الخشبية"
-    ],
-    reviewsList: [
-      {
-        id: 1,
-        customer: "سامي علي",
-        rating: 4.8,
-        comment: "حرفي ماهر",
-        date: "2024-01-07"
-      }
-    ]
-  },
-  9: {
-    id: 9,
-    name: "ماجد سالم",
-    profession: "صباغ",
-    city: "الزهور",
-    rating: 4.6,
-    reviews: 72,
-    experience: 7,
-    priceRange: "38-82 $",
-    image: "/workers/painter2.jpg",
-    description: "صباغ متخصص في جميع أنواع الدهانات الحديثة.",
-    completedJobs: 160,
-    available: true,
-    phone: "+9647701234575",
-    email: "majed.salem@example.com",
-    specialties: [
-      "الدهانات الحديثة",
-      "الديكور",
-      "دهانات الواجهات",
-      "الدهانات الخاصة"
-    ],
-    reviewsList: [
-      {
-        id: 1,
-        customer: "هدى محمد",
-        rating: 4.7,
-        comment: "عمل جيد",
-        date: "2024-01-06"
-      }
-    ]
-  },
-  10: {
-    id: 10,
-    name: "فهد عمر",
-    profession: "كهربائي",
-    city: "الرفاعي",
-    rating: 4.8,
-    reviews: 98,
-    experience: 9,
-    priceRange: "48-95 $",
-    image: "/workers/electrician4.jpg",
-    description: "كهربائي خبير في جميع أعمال الكهرباء المنزلية والتجارية.",
-    completedJobs: 205,
-    available: true,
-    phone: "+9647701234576",
-    email: "fahad.omar@example.com",
-    specialties: [
-      "الكهرباء المنزلية",
-      "الكهرباء التجارية",
-      "أنظمة الإنذار",
-      "الصيانة الشاملة"
-    ],
-    reviewsList: [
-      {
-        id: 1,
-        customer: "ريم خالد",
-        rating: 5,
-        comment: "محترف وسريع",
-        date: "2024-01-05"
-      }
-    ]
   }
 };
 
@@ -377,7 +129,6 @@ function TabPanel({ children, value, index, ...other }) {
 function WorkerProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
   const [tabValue, setTabValue] = useState(0);
   const [selectedService, setSelectedService] = useState("");
 
@@ -399,12 +150,8 @@ function WorkerProfile() {
   };
 
   const handleServiceRequest = () => {
-    if (!isAuthenticated) {
-      navigate("/register?redirect=service");
-      return;
-    }
-
     if (selectedService) {
+      // هنا يمكن إضافة منطق طلب الخدمة
       alert(`تم طلب خدمة ${selectedService} من ${worker.name}`);
     } else {
       alert("الرجاء اختيار نوع الخدمة المطلوبة");
@@ -431,6 +178,7 @@ function WorkerProfile() {
       }}
     >
       <Container maxWidth="lg">
+        {/* رأس الصفحة */}
         <Card sx={{ mb: 4, borderRadius: 3, overflow: "hidden" }}>
           <Box
             sx={{
@@ -502,13 +250,7 @@ function WorkerProfile() {
                     variant="contained"
                     fullWidth
                     size="large"
-                    onClick={() => {
-                      if (!isAuthenticated) {
-                        navigate("/register?redirect=service");
-                      } else {
-                        setTabValue(2);
-                      }
-                    }}
+                    onClick={() => setTabValue(2)}
                     sx={{
                       borderRadius: 2,
                       py: 1.5,
@@ -524,6 +266,7 @@ function WorkerProfile() {
           </CardContent>
         </Card>
 
+        {/* التبويبات */}
         <Paper sx={{ width: "100%", mb: 4, borderRadius: 3 }}>
           <Tabs
             value={tabValue}
@@ -543,6 +286,7 @@ function WorkerProfile() {
           </Tabs>
         </Paper>
 
+        {/* محتوى التبويبات */}
         <TabPanel value={tabValue} index={0}>
           <Grid container spacing={4}>
             <Grid item xs={12} md={8}>
