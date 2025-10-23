@@ -17,34 +17,125 @@ import {
   MenuItem,
   Stack,
   Avatar,
-  CircularProgress,
-  Alert,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Search, LocationOn, Work } from "@mui/icons-material";
-import { workerService } from "../services";
-import { professionService } from "../services";
-import { neighborhoodService } from "../services";
+
+const workersData = [
+  {
+    id: 1,
+    name: "أحمد محمد",
+    profession: "كهربائي",
+    city: "الزهور",
+    rating: 4.8,
+    reviews: 127,
+    experience: 8,
+    price: "50-100",
+    image: "/workers/electrician1.jpg",
+    description: "متخصص في التركيبات الكهربائية المنزلية والتجارية",
+    completedJobs: 234,
+    available: true,
+  },
+  {
+    id: 2,
+    name: "مصطفى خالد",
+    profession: "كهربائي",
+    city: "الرفاعي",
+    rating: 4.9,
+    reviews: 89,
+    experience: 12,
+    price: "60-120",
+    image: "/workers/electrician2.jpg",
+    description: "خبير في إصلاح الأعطال الكهربائية المعقدة",
+    completedJobs: 189,
+    available: true,
+  },
+  {
+    id: 3,
+    name: "علي حسين",
+    profession: "سباك",
+    city: "النور",
+    rating: 4.7,
+    reviews: 156,
+    experience: 10,
+    price: "40-80",
+    image: "/workers/plumber1.jpg",
+    description: "متخصص في أعمال السباكة المنزلية والتجارية",
+    completedJobs: 312,
+    available: true,
+  },
+  {
+    id: 4,
+    name: "عمر صالح",
+    profession: "سباك",
+    city: "الوحدة",
+    rating: 4.6,
+    reviews: 98,
+    experience: 7,
+    price: "35-70",
+    image: "/workers/plumber2.jpg",
+    description: "خبير في حل مشاكل التسريبات والتصريف",
+    completedJobs: 167,
+    available: false,
+  },
+  {
+    id: 5,
+    name: "خالد إبراهيم",
+    profession: "نجار",
+    city: "التحرير",
+    rating: 4.9,
+    reviews: 203,
+    experience: 15,
+    price: "80-150",
+    image: "/workers/carpenter1.jpg",
+    description: "فنان في الأعمال الخشبية والديكورات",
+    completedJobs: 445,
+    available: true,
+  },
+  {
+    id: 6,
+    name: "محمود عبدالله",
+    profession: "صباغ",
+    city: "الإصلاح الزراعي",
+    rating: 4.5,
+    reviews: 134,
+    experience: 9,
+    price: "30-60",
+    image: "/workers/painter1.jpg",
+    description: "متخصص في أعمال الدهان والتشطيبات الحديثة",
+    completedJobs: 278,
+    available: true,
+  },
+];
+
+const cities = [
+  "الزهور", "الرفاعي", "النور", "الوحدة", "التحرير", "الإصلاح الزراعي",
+  "القادسية", "الحدباء", "الميثاق", "المأمون", "الرسالة", "فلسطين",
+  "الشرطة", "المثنى", "الكرامة", "الصديق", "السكر", "الضباط", "العربي",
+  "الصحة", "المصارف", "الزراعي", "البلديات", "الفيصلية", "اليرموك",
+  "سومر", "الرشيدية", "الكفاءات", "الجزائر", "الغزلاني", "المهندسين",
+  "المجموعة الثقافية", "النبي يونس", "الكندي الأولى", "الكندي الثانية",
+  "الأندلس", "الشفاء", "الحرية", "العامل", "الصناعة", "الموصل الجديدة",
+  "الدواسة", "باب الطوب", "باب السراي", "الدندان", "الميدان", "الساعة",
+  "باب سنجار", "باب لكش", "الفاروق", "الزنجيلي", "المنصور", "17 تموز",
+  "تل الرمان", "وادي حجر", "القاهرة", "البكر", "الجامعة"
+];
+
+const professions = [
+  "كهربائي", "سباك", "نجار", "صباغ", "مكيفات", "السيراميك", 
+  "جبس", "ألمنيوم", "حداد", "تنظيف", "عامل للحدائق", "عازل حراري"
+];
 
 function WorkersList() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [workers, setWorkers] = useState([]);
-  const [professions, setProfessions] = useState([]);
-  const [neighborhoods, setNeighborhoods] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [workers, setWorkers] = useState(workersData);
   const [filters, setFilters] = useState({
     profession: "",
-    neighborhood: "",
+    city: "",
     search: "",
     minRating: 0,
-    available: false,
   });
-
-  useEffect(() => {
-    loadInitialData();
-  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -55,67 +146,36 @@ function WorkersList() {
   }, [location]);
 
   useEffect(() => {
-    loadWorkers();
+    let filtered = workersData;
+
+    if (filters.profession) {
+      filtered = filtered.filter(worker => 
+        worker.profession === filters.profession
+      );
+    }
+
+    if (filters.city) {
+      filtered = filtered.filter(worker => 
+        worker.city === filters.city
+      );
+    }
+
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(worker =>
+        worker.name.toLowerCase().includes(searchLower) ||
+        worker.description.toLowerCase().includes(searchLower)
+      );
+    }
+
+    if (filters.minRating > 0) {
+      filtered = filtered.filter(worker => 
+        worker.rating >= filters.minRating
+      );
+    }
+
+    setWorkers(filtered);
   }, [filters]);
-
-  const loadInitialData = async () => {
-    try {
-      const [professionsData, neighborhoodsData] = await Promise.all([
-        professionService.getProfessionsWithCache(),
-        neighborhoodService.getNeighborhoodsWithCache(),
-      ]);
-      setProfessions(professionsData);
-      setNeighborhoods(neighborhoodsData);
-    } catch (err) {
-      console.error("Error loading initial data:", err);
-    }
-  };
-
-  const loadWorkers = async () => {
-    try {
-      setLoading(true);
-      setError("");
-
-      const params = {};
-      
-      if (filters.profession) {
-        const selectedProfession = professions.find(p => p.name === filters.profession);
-        if (selectedProfession) {
-          params.profession_id = selectedProfession.id;
-        }
-      }
-
-      if (filters.neighborhood) {
-        const selectedNeighborhood = neighborhoods.find(n => n.name === filters.neighborhood);
-        if (selectedNeighborhood) {
-          params.neighborhood_id = selectedNeighborhood.id;
-        }
-      }
-
-      if (filters.search) {
-        params.search = filters.search;
-      }
-
-      if (filters.minRating > 0) {
-        params.min_rating = filters.minRating;
-      }
-
-      if (filters.available) {
-        params.is_available = true;
-      }
-
-      params.sort = "rating";
-      params.order = "DESC";
-
-      const response = await workerService.searchWorkers(params);
-      setWorkers(response.data || []);
-    } catch (err) {
-      console.error("Error loading workers:", err);
-      setError("فشل تحميل قائمة العمال. يرجى المحاولة مرة أخرى.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({
@@ -127,10 +187,9 @@ function WorkersList() {
   const handleClearFilters = () => {
     setFilters({
       profession: "",
-      neighborhood: "",
+      city: "",
       search: "",
       minRating: 0,
-      available: false,
     });
   };
 
@@ -167,8 +226,8 @@ function WorkersList() {
             variant="h3"
             component="h1"
             gutterBottom
+            sx={{ mb: 2 }}
             sx={{
-              mb: 2,
               fontWeight: 700,
               color: "primary.main",
               background: "linear-gradient(45deg, #0f3057, #3c5889)",
@@ -183,12 +242,6 @@ function WorkersList() {
             اكتشف أفضل الحرفيين المهرة في منطقتك
           </Typography>
         </Box>
-
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
 
         <Card sx={{ p: 3, mb: 4, borderRadius: 3 }}>
           <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="center">
@@ -212,23 +265,21 @@ function WorkersList() {
               >
                 <MenuItem value="">جميع المهن</MenuItem>
                 {professions.map((prof) => (
-                  <MenuItem key={prof.id} value={prof.name}>{prof.name}</MenuItem>
+                  <MenuItem key={prof} value={prof}>{prof}</MenuItem>
                 ))}
               </Select>
             </FormControl>
 
             <FormControl fullWidth sx={{ minWidth: 150 }}>
-              <InputLabel>الحي</InputLabel>
+              <InputLabel>المنطقة</InputLabel>
               <Select
-                value={filters.neighborhood}
-                label="الحي"
-                onChange={(e) => handleFilterChange("neighborhood", e.target.value)}
+                value={filters.city}
+                label="المنطقة"
+                onChange={(e) => handleFilterChange("city", e.target.value)}
               >
-                <MenuItem value="">جميع الأحياء</MenuItem>
-                {neighborhoods.map((neighborhood) => (
-                  <MenuItem key={neighborhood.id} value={neighborhood.name}>
-                    {neighborhood.name}
-                  </MenuItem>
+                <MenuItem value="">جميع المناطق</MenuItem>
+                {cities.map((city) => (
+                  <MenuItem key={city} value={city}>{city}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -257,141 +308,136 @@ function WorkersList() {
           </Stack>
         </Card>
 
-        {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-            <CircularProgress size={60} />
-          </Box>
-        ) : (
-          <>
-            <Typography variant="h6" sx={{ mb: 2, color: "text.secondary" }}>
-              {workers.length} حرفي متاح
-            </Typography>
+        <Typography variant="h6" sx={{ mb: 2, color: "text.secondary" }}>
+          {workers.length} حرفي متاح
+        </Typography>
 
-            <Grid container spacing={3}>
-              {workers.map((worker) => (
-                <Grid item xs={12} sm={6} md={4} key={worker.id}>
-                  <Card
+        <Grid container spacing={3}>
+          {workers.map((worker) => (
+            <Grid item xs={12} sm={6} md={4} key={worker.id}>
+              <Card
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  borderRadius: 3,
+                  overflow: "hidden",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-8px)",
+                    boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
+                  },
+                }}
+              >
+                <Box sx={{ position: "relative" }}>
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={worker.image}
+                    alt={worker.name}
                     sx={{
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      borderRadius: 3,
-                      overflow: "hidden",
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        transform: "translateY(-8px)",
-                        boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
-                      },
+                      objectFit: "cover",
+                      filter: worker.available ? "none" : "grayscale(50%)",
                     }}
-                  >
-                    <Box sx={{ position: "relative" }}>
-                      <CardMedia
-                        component="img"
-                        height="200"
-                        image={workerService.getProfileImageUrl(worker.profile_image) || "/workers/default.jpg"}
-                        alt={worker.user?.name}
-                        sx={{
-                          objectFit: "cover",
-                          filter: worker.is_available ? "none" : "grayscale(50%)",
-                        }}
-                      />
-                      <Chip
-                        label={worker.is_available ? "متاح" : "غير متاح"}
-                        color={worker.is_available ? "success" : "default"}
-                        size="small"
-                        sx={{
-                          position: "absolute",
-                          top: 12,
-                          left: 12,
-                        }}
-                      />
-                      <Chip
-                        label={worker.profession?.name || "غير محدد"}
-                        sx={{
-                          position: "absolute",
-                          top: 12,
-                          right: 12,
-                          backgroundColor: getProfessionColor(worker.profession?.name),
-                          color: "white",
-                          fontWeight: "bold",
-                        }}
-                      />
-                    </Box>
+                  />
+                  <Chip
+                    label={worker.available ? "متاح" : "غير متاح"}
+                    color={worker.available ? "success" : "default"}
+                    size="small"
+                    sx={{
+                      position: "absolute",
+                      top: 12,
+                      left: 12,
+                    }}
+                  />
+                  <Chip
+                    label={worker.profession}
+                    sx={{
+                      position: "absolute",
+                      top: 12,
+                      right: 12,
+                      backgroundColor: getProfessionColor(worker.profession),
+                      color: "white",
+                      fontWeight: "bold",
+                    }}
+                  />
+                </Box>
 
-                    <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                      <Box sx={{ mb: 2 }}>
-                        <Typography variant="h6" component="h2" gutterBottom>
-                          {worker.user?.name || "غير محدد"}
-                        </Typography>
-                        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                          <Rating value={worker.average_rating || 0} precision={0.1} readOnly size="small" />
-                          <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                            ({worker.average_rating?.toFixed(1) || "0.0"})
-                          </Typography>
-                        </Box>
-                      </Box>
-
-                      <Stack spacing={1} sx={{ mb: 3 }}>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <LocationOn sx={{ fontSize: 18, color: "text.secondary", ml: 1 }} />
-                          <Typography variant="body2" color="text.secondary">
-                            {worker.user?.neighborhood?.name || "غير محدد"}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <Work sx={{ fontSize: 18, color: "text.secondary", ml: 1 }} />
-                          <Typography variant="body2" color="text.secondary">
-                            {worker.experience_years || 0} سنوات خبرة
-                          </Typography>
-                        </Box>
-                        <Typography variant="body2" color="text.secondary">
-                          {worker.total_jobs || 0} مهمة مكتملة
-                        </Typography>
-                      </Stack>
-
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ mb: 3, lineHeight: 1.6 }}
-                      >
-                        {worker.bio || "لا يوجد وصف"}
+                <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="h6" component="h2" gutterBottom>
+                      {worker.name}
+                    </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                      <Rating value={worker.rating} precision={0.1} readOnly size="small" />
+                      <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                        ({worker.rating})
                       </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+                        ({worker.reviews} تقييم)
+                      </Typography>
+                    </Box>
+                  </Box>
 
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <Typography variant="body2" color="text.secondary">
-                          {worker.contact_phone || "لا يوجد رقم"}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          onClick={() => navigate(`/workers/${worker.id}`)}
-                          disabled={!worker.is_available}
-                          sx={{
-                            borderRadius: 2,
-                            textTransform: "none",
-                            fontWeight: "bold",
-                            px: 3,
-                          }}
-                        >
-                          عرض الملف
-                        </Button>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
+                  <Stack spacing={1} sx={{ mb: 3 }}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <LocationOn sx={{ fontSize: 18, color: "text.secondary", ml: 1 }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {worker.city}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Work sx={{ fontSize: 18, color: "text.secondary", ml: 1 }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {worker.experience} سنوات خبرة
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      {worker.completedJobs} مهمة مكتملة
+                    </Typography>
+                  </Stack>
+
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 3, lineHeight: 1.6 }}
+                  >
+                    {worker.description}
+                  </Typography>
+
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography variant="h6" color="primary.main" fontWeight="bold">
+                      {worker.price} $
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      onClick={() => navigate(`/worker/${worker.id}`)}
+                      disabled={!worker.available}
+                      sx={{
+                        borderRadius: 2,
+                        textTransform: "none",
+                        fontWeight: "bold",
+                        px: 3,
+                      }}
+                    >
+                      طلب الخدمة
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
             </Grid>
+          ))}
+        </Grid>
 
-            {workers.length === 0 && !loading && (
-              <Box sx={{ textAlign: "center", py: 8, width: "100%" }}>
-                <Typography variant="h5" color="text.secondary" gutterBottom>
-                  لا يوجد عمال مطابقين للبحث
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  حاول تغيير معايير البحث الخاصة بك
-                </Typography>
-              </Box>
-            )}
-          </>
+        {workers.length === 0 && (
+          <Box sx={{ textAlign: "center", py: 8 }}>
+            <Typography variant="h5" color="text.secondary" gutterBottom>
+              لم يتم العثور على حرفيين
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              حاول تغيير معايير البحث الخاصة بك
+            </Typography>
+          </Box>
         )}
       </Container>
     </Box>
